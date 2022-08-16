@@ -1,14 +1,14 @@
 display_information:
-  name: grantbot
-  description: catch you a grant! https://hackclub.com/grant/
-  background_color: "#000000"
+  name: grant dino
+  description: the egyptian god of hackathon grants
+  background_color: "#9c6314"
 features:
   app_home:
     home_tab_enabled: true
     messages_tab_enabled: false
     messages_tab_read_only_enabled: true
   bot_user:
-    display_name: grantbot
+    display_name: grant dino
     always_online: false
 oauth_config:
   scopes:
