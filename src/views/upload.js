@@ -38,9 +38,11 @@ export default function uploadView({
                 ? ":white_check_mark: Venue proof uploaded!"
                 : ":tw_outbox_tray: Upload proof of venue",
             },
-            url: `https://grantbot.ngrok.io/apply?${new URLSearchParams({
-              s: state,
-            })}}`,
+            url: venueProofUploaded
+              ? undefined
+              : `https://grantbot.ngrok.io/apply?${new URLSearchParams({
+                  s: state,
+                })}}`,
             style: venueProofUploaded ? undefined : "primary",
           },
         ],
