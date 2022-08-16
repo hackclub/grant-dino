@@ -1,0 +1,7 @@
+- [ ] application form
+  - [ ] event start date
+  - [ ] venue point of contact
+  - [ ] venue proof upload
+- [ ] dynamic response time ("thank you for applying! it's currently the weekend, so we'll get back to you in 24 hours after Monday)
+- [ ] airtable with stages ("processed", "pending", etc.)
+- [ ] count of pending applications in bank admin dashboard

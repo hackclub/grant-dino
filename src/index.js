@@ -1,13 +1,18 @@
 import "dotenv/config";
 
+import * as fs from "fs";
+
 import _bolt from "@slack/bolt";
 const { App } = _bolt;
 
+import { v4 as uuid } from "uuid";
+import formidable from "formidable";
+
+import uploadView from "./views/upload.js";
+import t from "./transcript.js";
 import applyView from "./views/apply.js";
 import { sign, verify } from "./jwt.js";
-
-import { v4 as uuid } from "uuid";
-import uploadView from "./views/upload.js";
+import axios from "axios";
 
 function extractUrl(url) {
   // stolen from https://urlregex.com
@@ -37,8 +42,8 @@ const app = new App({
           `<!DOCTYPE html>
 <html>
   <body>
-    <form method="POST">
-      <input type="file" name="venue-proof" />
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="venue-proof" required />
       <input type="submit" />
     </form>
     <!-- <pre><code>${JSON.stringify(state)}</code></pre> -->
@@ -55,15 +60,45 @@ const app = new App({
 
         const state = await verify(url.searchParams.get("s"));
 
-        await app.client.views.update({
-          external_id: state.external_id,
-          view: uploadView({
-            state: url.searchParams.get("s"),
-            venueProofUploaded: true,
-          }),
-        });
+        const form = formidable();
 
-        res.end("yay!");
+        form.parse(req, async (err, fields, files) => {
+          if (err) {
+            return res.end("something went wrong.");
+          }
+
+          const file = files["venue-proof"];
+          const stream = fs.createReadStream(file.filepath);
+
+          const { data: url } = await axios.post(
+            "https://bucky.hackclub.com",
+            { file: stream },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          state.venue_proof_url = url;
+          state.venue_proof_filename = file.originalFilename;
+
+          await app.client.views.update({
+            external_id: state.external_id,
+            view: uploadView({
+              state: await sign(state),
+              venueProofUploaded: true,
+              venueProofUrl:
+                file.mimetype == "image/png" || file.mimetype == "image/jpeg"
+                  ? state.venue_proof_url
+                  : undefined,
+              venueProofFilename: state.venue_proof_filename,
+              externalId: state.external_id,
+            }),
+          });
+
+          res.end("yay!");
+        });
       },
     },
   ],
@@ -114,13 +149,13 @@ app.message(async ({ message, client }) => {
         thread_ts: message.ts,
       });
       await client.reactions.add({
-        name: "hyper-dino-wave",
+        name: t.react.greet,
         channel: message.channel,
         timestamp: message.ts,
       });
     } else {
       await client.reactions.add({
-        name: "confused-dino",
+        name: t.react.invalid,
         channel: message.channel,
         timestamp: message.ts,
       });
@@ -138,7 +173,15 @@ app.action("apply", async ({ client, body, ack, action }) => {
 
   const state = await verify(action.value);
 
-  if (body.user.id != state.user) return;
+  if (body.user.id != state.user) {
+    await client.chat.postEphemeral({
+      channel: body.channel.id,
+      user: body.user.id,
+      thread_ts: body.container.thread_ts,
+      text: "you didn't start this application!",
+    });
+    return;
+  }
 
   state.ts = body.message.ts;
 
@@ -157,6 +200,9 @@ app.view("apply", async ({ ack, view }) => {
   const externalId = uuid();
   state.external_id = externalId;
 
+  state.bank_url = view.state.values.bank_url.bank_url.value;
+  state.url = view.state.values.url.url.value;
+
   await ack({
     response_action: "push",
     view: uploadView({
@@ -168,6 +214,8 @@ app.view("apply", async ({ ack, view }) => {
 
 app.view("apply2", async ({ ack, view, client }) => {
   const state = await verify(view.private_metadata);
+
+  console.log(state);
 
   const text =
     "Your application has been submitted! We'll review it and get back to you within 24 hours.";
@@ -188,12 +236,12 @@ app.view("apply2", async ({ ack, view, client }) => {
   });
 
   await client.reactions.add({
-    name: "large_orange_circle",
+    name: t.react.reviewing,
     channel: process.env.GRANTS_CHANNEL,
     timestamp: state.original_ts,
   });
   await client.reactions.remove({
-    name: "hyper-dino-wave",
+    name: t.react.greet,
     channel: process.env.GRANTS_CHANNEL,
     timestamp: state.original_ts,
   });

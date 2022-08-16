@@ -21,9 +21,11 @@ export default function applyView({ url, state }) {
       },
       {
         type: "input",
+        block_id: "url",
         element: {
           type: "plain_text_input",
           initial_value: url,
+          action_id: "url",
         },
         label: {
           type: "plain_text",
@@ -51,8 +53,10 @@ export default function applyView({ url, state }) {
       },
       {
         type: "input",
+        block_id: "bank_url",
         element: {
           type: "plain_text_input",
+          action_id: "bank_url",
           placeholder: {
             type: "plain_text",
             text: "e.g. bank.hackclub.com/mahacks",
