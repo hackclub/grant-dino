@@ -1,0 +1,22 @@
+{
+  "name": "grantbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/hackclub/grantbot",
+  "author": "Caleb Denio <cjdenio44@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@slack/bolt": "^3.12.1",
+    "jose": "^4.8.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.19"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  }
+}
