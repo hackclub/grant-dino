@@ -48,10 +48,11 @@ const app = new App({
         res.end(
           `<!DOCTYPE html>
 <html>
-  <body>
+  <body style="margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif">
+    <p>Make sure your proof of venue has your event's date on it.</p>
     <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="venue-proof" required />
-      <input type="submit" />
+      <input type="file" name="venue-proof" style="display: block" required />
+      <input type="submit" value="Upload!" style="margin-top: 20px; font-size: 20px; padding: 10px 20px" />
     </form>
     <!-- <pre><code>${JSON.stringify(state)}</code></pre> -->
   </body>
@@ -90,21 +91,28 @@ const app = new App({
           state.venue_proof_url = url;
           state.venue_proof_filename = file.originalFilename;
 
-          await app.client.views.update({
-            external_id: state.external_id,
-            view: venueView({
-              state: await sign(state),
-              venueProofUploaded: true,
-              venueProofUrl:
-                file.mimetype == "image/png" || file.mimetype == "image/jpeg"
-                  ? state.venue_proof_url
-                  : undefined,
-              venueProofFilename: state.venue_proof_filename,
-              externalId: state.external_id,
-            }),
-          });
-
-          res.end("yay!");
+          try {
+            await app.client.views.update({
+              external_id: state.external_id,
+              view: venueView({
+                state: await sign(state),
+                venueProofUploaded: true,
+                venueProofUrl:
+                  file.mimetype == "image/png" || file.mimetype == "image/jpeg"
+                    ? state.venue_proof_url
+                    : undefined,
+                venueProofFilename: state.venue_proof_filename,
+                externalId: state.external_id,
+              }),
+            });
+            res.end(
+              "Your proof of venue has been uploaded! Head back to Slack to continue your application."
+            );
+          } catch (e) {
+            res.end(
+              "Something went wrong... did you close the popup in Slack?\n\nTry applying again, and post in the #hackathon-grants channel if you still have trouble."
+            );
+          }
         });
       },
     },
@@ -222,6 +230,7 @@ app.view("apply", async ({ ack, view }) => {
 
   state.bank_url = bank_url;
   state.url = view.state.values.url.url.value;
+  state.start_date = view.state.values.start_date.start_date.selected_date;
 
   await ack({
     response_action: "push",
@@ -255,6 +264,7 @@ app.view("apply2", async ({ ack, view, client }) => {
           },
         ],
         "Venue Email Address": state.venue_email,
+        "Start Date": state.start_date,
         Status: "Pending",
       },
     },
@@ -293,7 +303,9 @@ app.view("apply2", async ({ ack, view, client }) => {
 });
 
 // idk
-app.action("idk", async ({ ack }) => await ack());
+app.action("idk", async ({ ack }) => {
+  await ack();
+});
 
 (async () => {
   await app.start(process.env.PORT || 3000);

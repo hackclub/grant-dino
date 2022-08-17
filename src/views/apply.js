@@ -37,13 +37,30 @@ export default function applyView({ url, state }) {
         },
       },
       {
+        type: "input",
+        block_id: "start_date",
+        element: {
+          type: "datepicker",
+          action_id: "start_date",
+          focus_on_load: true,
+        },
+        label: {
+          type: "plain_text",
+          text: "Event Date",
+        },
+        hint: {
+          type: "plain_text",
+          text: "If your event spans multiple dates, select the start date.",
+        },
+      },
+      {
         type: "divider",
       },
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "You'll need to be on <https://hackclub.com/bank|Hack Club Bank> to receive your grant.",
+          text: "You'll need to be on <https://hackclub.com/bank|Hack Club Bank> to receive your grant. If you're not, click that button to sign up! :arrow_right:",
         },
         accessory: {
           type: "button",
