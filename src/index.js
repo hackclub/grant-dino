@@ -7,8 +7,9 @@ const { App } = _bolt;
 
 import { v4 as uuid } from "uuid";
 import formidable from "formidable";
+import airtable from "airtable";
 
-import uploadView from "./views/upload.js";
+import venueView from "./views/venue.js";
 import t from "./transcript.js";
 import applyView from "./views/apply.js";
 import { sign, verify } from "./jwt.js";
@@ -24,6 +25,12 @@ function extractUrl(url) {
 
   return match[0];
 }
+
+function isBankUrl(url) {
+  return /bank\.hackclub\.com\/[a-zA-Z0-9\-_]+/i.test(url);
+}
+
+const base = airtable.base("appEzv7w2IBMoxxHe");
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -85,7 +92,7 @@ const app = new App({
 
           await app.client.views.update({
             external_id: state.external_id,
-            view: uploadView({
+            view: venueView({
               state: await sign(state),
               venueProofUploaded: true,
               venueProofUrl:
@@ -200,12 +207,25 @@ app.view("apply", async ({ ack, view }) => {
   const externalId = uuid();
   state.external_id = externalId;
 
-  state.bank_url = view.state.values.bank_url.bank_url.value;
+  const bank_url = view.state.values.bank_url.bank_url.value;
+
+  if (!isBankUrl(bank_url)) {
+    await ack({
+      response_action: "errors",
+      errors: {
+        bank_url:
+          "Hmm, this doesn't look like a Hack Club Bank organization URL.",
+      },
+    });
+    return;
+  }
+
+  state.bank_url = bank_url;
   state.url = view.state.values.url.url.value;
 
   await ack({
     response_action: "push",
-    view: uploadView({
+    view: venueView({
       state: await sign(state),
       externalId,
     }),
@@ -215,10 +235,33 @@ app.view("apply", async ({ ack, view }) => {
 app.view("apply2", async ({ ack, view, client }) => {
   const state = await verify(view.private_metadata);
 
+  state.venue_email = view.state.values.venue_email.venue_email.value;
+
   console.log(state);
 
+  await base("FIRST Grant").create([
+    {
+      fields: {
+        "Event URL": state.url,
+        "Slack User": state.user,
+        "Message URL": `https://hackclub.slack.com/archives/${
+          process.env.GRANTS_CHANNEL
+        }/p${state.original_ts.replace(".", "")}`,
+        "Bank URL": state.bank_url,
+        "Proof of Venue": [
+          {
+            url: state.venue_proof_url,
+            filename: state.venue_proof_filename,
+          },
+        ],
+        "Venue Email Address": state.venue_email,
+        Status: "Pending",
+      },
+    },
+  ]);
+
   const text =
-    "Your application has been submitted! We'll review it and get back to you within 24 hours.";
+    "Your application has been submitted! We'll review it and post in this thread within 24 hours.";
 
   await client.chat.update({
     channel: process.env.GRANTS_CHANNEL,

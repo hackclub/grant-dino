@@ -5,7 +5,7 @@ export default function applyView({ url, state }) {
     private_metadata: state,
     title: {
       type: "plain_text",
-      text: "apply",
+      text: "Your event - 1/2",
     },
     submit: {
       type: "plain_text",
@@ -16,7 +16,7 @@ export default function applyView({ url, state }) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `welcome, oh yeah, etc.`,
+          text: "Welcome! We're super excited to see your application!",
         },
       },
       {
@@ -26,6 +26,10 @@ export default function applyView({ url, state }) {
           type: "plain_text_input",
           initial_value: url,
           action_id: "url",
+          placeholder: {
+            type: "plain_text",
+            text: "e.g. https://mahacks.com",
+          },
         },
         label: {
           type: "plain_text",

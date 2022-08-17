@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "@slack/bolt": "^3.12.1",
+    "airtable": "^0.11.4",
     "axios": "^0.27.2",
     "formidable": "^2.0.1",
     "jose": "^4.8.3",

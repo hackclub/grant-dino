@@ -1,4 +1,4 @@
-export default function uploadView({
+export default function venueView({
   state,
   externalId,
   venueProofUploaded = false,
@@ -8,7 +8,7 @@ export default function uploadView({
   return {
     type: "modal",
     callback_id: "apply2",
-    title: { type: "plain_text", text: "apply" },
+    title: { type: "plain_text", text: "Your venue - 2/2" },
     close: { type: "plain_text", text: "Back" },
     submit: venueProofUploaded
       ? {
@@ -64,6 +64,26 @@ export default function uploadView({
               type: "image",
               image_url: venueProofUrl,
               alt_text: "Proof of venue",
+            },
+          ]
+        : []),
+      ...(venueProofUploaded
+        ? [
+            {
+              type: "input",
+              block_id: "venue_email",
+              element: {
+                type: "plain_text_input",
+                action_id: "venue_email",
+                placeholder: {
+                  type: "plain_text",
+                  text: "e.g. orpheus@my-venue.com",
+                },
+              },
+              label: {
+                type: "plain_text",
+                text: "Venue email address",
+              },
             },
           ]
         : []),

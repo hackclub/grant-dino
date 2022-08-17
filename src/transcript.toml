@@ -1,0 +1,13 @@
+["reactions"]
+greet = "hyper-dino-wave"
+invalid = "confused-dino"
+reviewing = "hourglass_flowing_sand"
+
+["messages"]
+start = [
+  "uwu, is this a hackathon i spot?",
+  "that looks like a hackathon!",
+  "i see a hackathon here!",
+  "ah, is that a hackathon?",
+  "",
+]
