@@ -49,7 +49,8 @@ const app = new App({
           `<!DOCTYPE html>
 <html>
   <body style="margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif">
-    <p>Make sure your proof of venue has your event's date on it.</p>
+    <p style="margin-bottom: 0px;">Upload a photo of a contract or MOU with your venue.</p>
+    <p style="margin-bottom: 30px;">Make sure it has your event's date on it!</p>
     <form method="POST" enctype="multipart/form-data">
       <input type="file" name="venue-proof" style="display: block" required />
       <input type="submit" value="Upload!" style="margin-top: 20px; font-size: 20px; padding: 10px 20px" />
