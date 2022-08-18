@@ -1,5 +1,5 @@
-- [ ] application form
-  - [ ] event start date
+- [x] application form
+  - [x] event start date
   - [x] venue point of contact
   - [x] venue proof upload
 - [ ] dynamic response time ("thank you for applying! it's currently the weekend, so we'll get back to you in 24 hours after Monday)

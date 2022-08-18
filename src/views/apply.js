@@ -5,7 +5,7 @@ export default function applyView({ url, state }) {
     private_metadata: state,
     title: {
       type: "plain_text",
-      text: "Your event - 1/2",
+      text: "Your hackathon - 1/2",
     },
     submit: {
       type: "plain_text",
@@ -33,7 +33,7 @@ export default function applyView({ url, state }) {
         },
         label: {
           type: "plain_text",
-          text: "Event Website",
+          text: "Hackathon Website",
         },
       },
       {
@@ -46,11 +46,11 @@ export default function applyView({ url, state }) {
         },
         label: {
           type: "plain_text",
-          text: "Event Date",
+          text: "Hackathon Date",
         },
         hint: {
           type: "plain_text",
-          text: "If your event spans multiple dates, select the start date.",
+          text: "If your hackathon spans multiple dates, select the start date.",
         },
       },
       {
