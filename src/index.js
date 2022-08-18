@@ -94,6 +94,11 @@ const app = new App({
 });
 
 async function sendApplyButton({ channel, user, ts, url }) {
+  await app.client.reactions.add({
+    name: t.react.greet,
+    channel,
+    timestamp: ts,
+  });
   await app.client.chat.postMessage({
     channel: channel,
     text: `<@${user}> over here!`,
@@ -127,11 +132,6 @@ async function sendApplyButton({ channel, user, ts, url }) {
       },
     ],
     thread_ts: ts,
-  });
-  await app.client.reactions.add({
-    name: t.react.greet,
-    channel,
-    timestamp: ts,
   });
 }
 
