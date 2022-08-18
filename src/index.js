@@ -22,6 +22,14 @@ import {
   coolSite,
 } from "./util.js";
 
+const ADMINS = [
+  "U013B6CPV62", // Caleb
+  "U01D6FYHLUW", // Ella
+  "U0C7B14Q3", // Max
+  "U01QHUY5XLK", // Mel
+  "U02A67DA1QX", // Liv
+];
+
 const base = airtable.base("appEzv7w2IBMoxxHe");
 
 const app = new App({
@@ -291,6 +299,7 @@ app.view("apply2", async ({ ack, view, client }) => {
         "Message URL": `https://hackclub.slack.com/archives/${
           process.env.GRANTS_CHANNEL
         }/p${state.original_ts.replace(".", "")}`,
+        "Message Timestamp": state.original_ts,
         "Bank URL": state.bank_url,
         "Proof of Venue": [
           {
@@ -334,12 +343,134 @@ app.view("apply2", async ({ ack, view, client }) => {
     timestamp: state.original_ts,
   });
 
-  await ack({ response_action: "clear" });
+  await ack({
+    response_action: "push",
+    view: {
+      type: "modal",
+      clear_on_close: true,
+      title: {
+        type: "plain_text",
+        text: "Thanks for applying!",
+      },
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: ":tada: Your application has been submitted! We'll review it and follow up within 24 hours.",
+          },
+        },
+      ],
+    },
+  });
 });
 
 // idk
 app.action("idk", async ({ ack }) => {
   await ack();
+});
+
+app.shortcut("update_grant_status", async ({ ack, shortcut, client }) => {
+  await ack();
+
+  if (!ADMINS.includes(shortcut.user.id)) return;
+
+  await base("FIRST Grant")
+    .select({
+      maxRecords: 1,
+      filterByFormula: `{Message Timestamp} = "${shortcut.message_ts}"`,
+    })
+    .firstPage(async (err, records) => {
+      if (records.length == 0) return;
+      const record = records[0];
+
+      await client.views.open({
+        trigger_id: shortcut.trigger_id,
+        view: {
+          type: "modal",
+          title: {
+            type: "plain_text",
+            text: "Update grant status",
+          },
+          blocks: [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: record.fields["Event URL"],
+              },
+            },
+            {
+              type: "actions",
+              elements: [
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "Approve",
+                  },
+                  style: "primary",
+                  action_id: "approve",
+                  value: shortcut.message_ts,
+                },
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "Reject",
+                  },
+                  style: "danger",
+                  action_id: "reject",
+                  value: shortcut.message_ts,
+                },
+              ],
+            },
+          ],
+        },
+      });
+    });
+});
+
+async function updateReaction(ts, reaction) {
+  try {
+    await app.client.reactions.remove({
+      name: t.react.reviewing,
+      timestamp: ts,
+      channel: process.env.GRANTS_CHANNEL,
+    });
+  } catch (e) {}
+  try {
+    await app.client.reactions.remove({
+      name: t.react.rejected,
+      timestamp: ts,
+      channel: process.env.GRANTS_CHANNEL,
+    });
+  } catch (e) {}
+  try {
+    await app.client.reactions.remove({
+      name: t.react.approved,
+      timestamp: ts,
+      channel: process.env.GRANTS_CHANNEL,
+    });
+  } catch (e) {}
+
+  await app.client.reactions.add({
+    name: t.react[reaction],
+    timestamp: ts,
+    channel: process.env.GRANTS_CHANNEL,
+  });
+}
+
+app.action("approve", async ({ ack, action }) => {
+  await ack();
+
+  await updateReaction(action.value, "approved");
+});
+
+app.action("reject", async ({ ack, action }) => {
+  await ack();
+
+  await updateReaction(action.value, "rejected");
 });
 
 (async () => {

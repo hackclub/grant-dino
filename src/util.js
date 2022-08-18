@@ -50,7 +50,7 @@ export function coolSite(text) {
     "
   >
     <div class="card sunken" style="max-width: var(--size-narrow)">
-      <p>${text}</p>
+      <p style="font-size: var(--font-3);">${text}</p>
     </div>
   </body>
 </html>`;

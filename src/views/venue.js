@@ -24,7 +24,7 @@ export default function venueView({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "Almost there! We just some info on your venue.",
+          text: "Almost there! We just need some info on your venue.",
         },
       },
       {
