@@ -8,27 +8,13 @@ const { App } = _bolt;
 import { v4 as uuid } from "uuid";
 import formidable from "formidable";
 import airtable from "airtable";
+import axios from "axios";
 
 import venueView from "./views/venue.js";
 import t from "./transcript.js";
 import applyView from "./views/apply.js";
 import { sign, verify } from "./jwt.js";
-import axios from "axios";
-
-function extractUrl(url) {
-  // stolen from https://urlregex.com
-  const match = url?.match(
-    /(([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?/
-  );
-
-  if (!match) return null;
-
-  return match[0];
-}
-
-function isBankUrl(url) {
-  return /bank\.hackclub\.com\/[a-zA-Z0-9\-_]+/i.test(url);
-}
+import { extractUrl, escapeRegex, isBankUrl, safetyNet } from "./util.js";
 
 const base = airtable.base("appEzv7w2IBMoxxHe");
 
@@ -39,32 +25,19 @@ const app = new App({
     {
       method: "GET",
       path: "/apply",
-      async handler(req, res) {
+      handler: safetyNet(async (req, res) => {
         const url = new URL(req.url, "https://example.com");
 
-        const state = await verify(url.searchParams.get("s"));
+        await verify(url.searchParams.get("s"));
 
         res.setHeader("Content-Type", "text/html");
-        res.end(
-          `<!DOCTYPE html>
-<html>
-  <body style="margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif">
-    <p style="margin-bottom: 0px;">Upload a photo of a contract or MOU with your venue.</p>
-    <p style="margin-bottom: 30px;">Make sure it has your event's date on it!</p>
-    <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="venue-proof" style="display: block" required />
-      <input type="submit" value="Upload!" style="margin-top: 20px; font-size: 20px; padding: 10px 20px" />
-    </form>
-    <!-- <pre><code>${JSON.stringify(state)}</code></pre> -->
-  </body>
-</html>`
-        );
-      },
+        res.end(await fs.promises.readFile("./src/views/upload.html"));
+      }),
     },
     {
       method: "POST",
       path: "/apply",
-      async handler(req, res) {
+      handler: safetyNet(async (req, res) => {
         const url = new URL(req.url, "https://example.com");
 
         const state = await verify(url.searchParams.get("s"));
@@ -115,73 +88,124 @@ const app = new App({
             );
           }
         });
-      },
+      }),
     },
   ],
 });
 
+async function sendApplyButton({ channel, user, ts, url }) {
+  await app.client.chat.postMessage({
+    channel: channel,
+    text: `<@${user}> over here!`,
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "is this a hackathon I spot? click the button to start your application!",
+        },
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":point_right: APPLY :point_left:",
+            },
+            style: "primary",
+            action_id: "apply",
+            value: await sign({
+              original_ts: ts,
+              url,
+              user,
+            }),
+          },
+        ],
+      },
+    ],
+    thread_ts: ts,
+  });
+  await app.client.reactions.add({
+    name: t.react.greet,
+    channel,
+    timestamp: ts,
+  });
+}
+
 app.message(async ({ message, client }) => {
   if (message.channel != process.env.GRANTS_CHANNEL) return;
   if (message.subtype) return;
+  if (message.thread_ts) return;
 
-  if (!message.thread_ts) {
-    // Top-level message!
+  const url = extractUrl(message.text);
 
-    const url = extractUrl(message.text);
-
-    if (url) {
-      await client.chat.postMessage({
-        channel: message.channel,
-        text: `<@${message.user}> over here!`,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: "is this a hackathon I spot? click the button to start your application!",
-            },
+  if (!url) {
+    await client.chat.postEphemeral({
+      channel: message.channel,
+      user: message.user,
+      text: "Hey there! I didn't see a URL in your message. If you're applying for a grant, make sure to post your hackathon's website URL here— otherwise, have a nice day!",
+    });
+  } else if (
+    message.text.trim() == url ||
+    new RegExp(`^<${escapeRegex(url)}(|\\S+)?>$`).test(message.text.trim())
+  ) {
+    await sendApplyButton({
+      channel: message.channel,
+      user: message.user,
+      ts: message.ts,
+      url,
+    });
+  } else {
+    await client.chat.postEphemeral({
+      channel: message.channel,
+      user: message.user,
+      text: "I see you put a URL in that message— would you like to apply for a grant?",
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `I see you put a URL in that message (${url})— would you like to apply for a grant?`,
           },
-          {
-            type: "actions",
-            elements: [
-              {
-                type: "button",
-                text: {
-                  type: "plain_text",
-                  emoji: true,
-                  text: ":point_right: APPLY :point_left:",
-                },
-                style: "primary",
-                action_id: "apply",
-                value: await sign({
-                  original_ts: message.ts,
-                  url,
-                  user: message.user,
-                }),
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Yes!",
               },
-            ],
-          },
-        ],
-        thread_ts: message.ts,
-      });
-      await client.reactions.add({
-        name: t.react.greet,
-        channel: message.channel,
-        timestamp: message.ts,
-      });
-    } else {
-      await client.reactions.add({
-        name: t.react.invalid,
-        channel: message.channel,
-        timestamp: message.ts,
-      });
-      await client.chat.postEphemeral({
-        channel: message.channel,
-        user: message.user,
-        text: "Hmm, I don't see a URL in that message— try posting your hackathon's website URL here!",
-      });
-    }
+              style: "primary",
+              action_id: "yes-apply",
+              value: await sign({
+                original_ts: message.ts,
+                url,
+                user: message.user,
+              }),
+            },
+          ],
+        },
+      ],
+    });
   }
+});
+
+app.action("yes-apply", async ({ client, body, action, ack }) => {
+  await ack();
+
+  const state = await verify(action.value);
+
+  await sendApplyButton({
+    channel: body.channel.id,
+    user: state.user,
+    ts: state.original_ts,
+    url: state.url,
+  });
 });
 
 app.action("apply", async ({ client, body, ack, action }) => {
@@ -264,7 +288,7 @@ app.view("apply2", async ({ ack, view, client }) => {
             filename: state.venue_proof_filename,
           },
         ],
-        "Venue Email Address": state.venue_email,
+        "Venue Contact Info": state.venue_email,
         "Start Date": state.start_date,
         Status: "Pending",
       },

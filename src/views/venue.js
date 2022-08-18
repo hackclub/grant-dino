@@ -24,7 +24,7 @@ export default function venueView({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "Almost there! We just need a few more pieces of info.",
+          text: "Almost there! We just some info on your venue.",
         },
       },
       {
@@ -80,9 +80,13 @@ export default function venueView({
                   text: "e.g. orpheus@my-venue.com",
                 },
               },
+              hint: {
+                type: "plain_text",
+                text: "Can be a phone number or an email address.",
+              },
               label: {
                 type: "plain_text",
-                text: "Venue email address",
+                text: "Venue contact info",
               },
             },
           ]

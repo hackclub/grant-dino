@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/hackclub/css@79ee8661dfe9ab17af7d35cd8d9d7373029a8919/theme.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/hackclub/css@79ee8661dfe9ab17af7d35cd8d9d7373029a8919/fonts.css"
+    />
+    <style>
+      .btn {
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: var(--font-weight-bold);
+        border-radius: var(--radii-circle);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-card);
+        letter-spacing: var(--letter-spacing-headline);
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.125s ease-in-out, box-shadow 0.125s ease-in-out;
+        box-sizing: border-box;
+        margin: 0;
+        min-width: 0;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        text-align: center;
+        line-height: inherit;
+        -webkit-text-decoration: none;
+        text-decoration: none;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        color: var(--theme-ui-colors-white, #ffffff);
+        background-color: var(--theme-ui-colors-primary, #ec3750);
+        border: 0;
+        font-size: var(--font-2);
+      }
+
+      .btn:focus,
+      .btn:hover {
+        box-shadow: var(--shadow-elevated);
+        transform: scale(1.0625);
+      }
+
+      .btn.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      p {
+        font-size: var(--font-3);
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body
+    style="
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <div class="card sunken">
+      <p>Upload a photo of a contract or MOU with your venue.</p>
+      <p>Make sure it has your event's date on it!</p>
+      <form method="POST" enctype="multipart/form-data" id="form">
+        <label for="venue-proof" id="venue-proof-label" class="btn"
+          >Choose a file</label
+        >
+        <input
+          type="file"
+          name="venue-proof"
+          id="venue-proof"
+          style="display: none"
+          onchange="
+            document.getElementById('venue-proof-label').innerText = 'Uploading...';
+            document.getElementById('venue-proof-label').classList.add('disabled');
+            document.getElementById('form').submit()
+        "
+          required
+        />
+      </form>
+    </div>
+  </body>
+</html>
