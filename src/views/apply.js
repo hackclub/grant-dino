@@ -16,8 +16,23 @@ export default function applyView({ url, state }) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "Welcome! We're super excited to see your application!",
+          text: "Welcome, we're super excited to see your application!\n\n *As a reminder, here are the grant requirements:*",
         },
+      },
+      {
+        type: "section",
+        fields: [
+          "Run by high schoolers",
+          "Fully in-person",
+          "Venue acquired",
+          "Handmade website",
+        ].map((requirement) => ({
+          type: "mrkdwn",
+          text: `:white_check_mark: ${requirement}`,
+        })),
+      },
+      {
+        type: "divider",
       },
       {
         type: "input",
@@ -66,11 +81,20 @@ export default function applyView({ url, state }) {
           type: "button",
           text: {
             type: "plain_text",
-            text: ":bank-hackclub: Apply for Hack Club Bank",
+            text: ":bank-hackclub: Sign up for Hack Club Bank",
           },
           action_id: "idk",
           url: "https://hackclub.com/bank#apply",
         },
+      },
+      {
+        type: "context",
+        elements: [
+          {
+            type: "mrkdwn",
+            text: "We process Hack Club Bank signups within 24 hours on weekdays.",
+          },
+        ],
       },
       {
         type: "input",
@@ -85,7 +109,7 @@ export default function applyView({ url, state }) {
         },
         label: {
           type: "plain_text",
-          text: "Hack Club Bank URL",
+          text: "Hack Club Bank organization URL",
         },
       },
     ],

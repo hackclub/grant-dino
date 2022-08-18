@@ -289,8 +289,6 @@ app.view("apply2", async ({ ack, view, client }) => {
 
   state.venue_email = view.state.values.venue_email.venue_email.value;
 
-  console.log(state);
-
   await base("FIRST Grant").create([
     {
       fields: {

@@ -20,12 +20,49 @@ export default function venueView({
     external_id: externalId,
     private_metadata: state,
     blocks: [
+      ...(venueProofUploaded
+        ? [
+            {
+              type: "input",
+              block_id: "venue_email",
+              element: {
+                type: "plain_text_input",
+                action_id: "venue_email",
+                placeholder: {
+                  type: "plain_text",
+                  text: "e.g. orpheus@my-venue.com",
+                },
+              },
+              hint: {
+                type: "plain_text",
+                text: "This is the email or phone number of someone we can contact at your venue. We'll never reach out to your venue without contacting you first.",
+              },
+              label: {
+                type: "plain_text",
+                text: "Venue point of contact",
+              },
+            },
+          ]
+        : []),
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "Almost there! We just need some info on your venue.",
+          text: "Next, we need proof of venue. You can use one of the following:",
         },
+      },
+      {
+        type: "section",
+        fields: [
+          {
+            type: "mrkdwn",
+            text: ":white_check_mark: Scan of a contract",
+          },
+          {
+            type: "mrkdwn",
+            text: ":white_check_mark: <https://www.investopedia.com/terms/m/mou.asp|MOU>",
+          },
+        ],
       },
       {
         type: "actions",
@@ -40,7 +77,7 @@ export default function venueView({
                 ? `:white_check_mark: Upload new venue proof`
                 : ":tw_outbox_tray: Upload proof of venue",
             },
-            url: `https://grantbot.ngrok.io/apply?${new URLSearchParams({
+            url: `https://${process.env.DOMAIN}/apply?${new URLSearchParams({
               s: state,
             })}}`,
             style: venueProofUploaded ? undefined : "primary",
@@ -64,30 +101,6 @@ export default function venueView({
               type: "image",
               image_url: venueProofUrl,
               alt_text: "Proof of venue",
-            },
-          ]
-        : []),
-      ...(venueProofUploaded
-        ? [
-            {
-              type: "input",
-              block_id: "venue_email",
-              element: {
-                type: "plain_text_input",
-                action_id: "venue_email",
-                placeholder: {
-                  type: "plain_text",
-                  text: "e.g. orpheus@my-venue.com",
-                },
-              },
-              hint: {
-                type: "plain_text",
-                text: "Can be a phone number or an email address.",
-              },
-              label: {
-                type: "plain_text",
-                text: "Venue contact info",
-              },
             },
           ]
         : []),
