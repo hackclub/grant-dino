@@ -14,7 +14,13 @@ import venueView from "./views/venue.js";
 import t from "./transcript.js";
 import applyView from "./views/apply.js";
 import { sign, verify } from "./jwt.js";
-import { extractUrl, escapeRegex, isBankUrl, safetyNet } from "./util.js";
+import {
+  extractUrl,
+  escapeRegex,
+  isBankUrl,
+  safetyNet,
+  coolSite,
+} from "./util.js";
 
 const base = airtable.base("appEzv7w2IBMoxxHe");
 
@@ -80,11 +86,15 @@ const app = new App({
               }),
             });
             res.end(
-              "Your proof of venue has been uploaded! Head back to Slack to continue your application."
+              coolSite(
+                "&#x2705; Your proof of venue has been uploaded! Head back to Slack to continue your application."
+              )
             );
           } catch (e) {
             res.end(
-              "Something went wrong... did you close the popup in Slack?\n\nTry applying again, and post in the #hackathon-grants channel if you still have trouble."
+              coolSite(
+                "&#x26D4; Something went wrong... did you close the popup in Slack?\n\nTry applying again, and post in the #hackathon-grants channel if you still have trouble."
+              )
             );
           }
         });

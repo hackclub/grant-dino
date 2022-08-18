@@ -24,3 +24,34 @@ export function extractUrl(text) {
 
   return match[0];
 }
+
+export function coolSite(text) {
+  return `
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/hackclub/css@79ee8661dfe9ab17af7d35cd8d9d7373029a8919/theme.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/hackclub/css@79ee8661dfe9ab17af7d35cd8d9d7373029a8919/fonts.css"
+    />
+  </head>
+  <body
+    style="
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <div class="card sunken" style="max-width: var(--size-narrow)">
+      <p>${text}</p>
+    </div>
+  </body>
+</html>`;
+}
