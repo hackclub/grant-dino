@@ -57,19 +57,136 @@
         font-size: var(--font-3);
         margin-top: 0;
       }
+
+      #orpheus {
+        width: 512px;
+        height: 500px;
+        background-size: cover;
+        background-position: center;
+      }
+      #orpheus.closed {
+        background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/0image.png");
+      }
+      #orpheus.open {
+        background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/1image.png");
+      }
+
+      #orpheus.chomp {
+        animation: chomp 0.3s linear infinite;
+      }
+
+      @keyframes chomp {
+        0% {
+          background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/0image.png");
+        }
+        49% {
+          background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/0image.png");
+        }
+
+        50% {
+          background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/1image.png");
+        }
+        100% {
+          background-image: url("https://cloud-boay7mu79-hack-club-bot.vercel.app/1image.png");
+        }
+      }
     </style>
   </head>
-  <body
-    style="
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    "
-  >
-    <div class="card sunken">
+  <body style="margin: 0">
+    <div
+      style="
+        min-height: 100vh;
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <!-- preload this image -->
+      <img
+        src="https://cloud-boay7mu79-hack-club-bot.vercel.app/1image.png"
+        style="display: none"
+      />
+
+      <div class="card sunken" style="margin-bottom: var(--spacing-4)">
+        <p>Upload a photo or scan of one of the following:</p>
+        <ul>
+          <li>A contract with your venue</li>
+          <li>
+            An <a href="https://www.investopedia.com/terms/m/mou.asp">MOU</a>
+          </li>
+          <li>Written confirmation in an email</li>
+        </ul>
+      </div>
+      <p style="margin-bottom: 0">
+        drag and drop a file into grant dino's mouth
+      </p>
+
+      <div id="orpheus" class="closed"></div>
+
+      <form method="POST" enctype="multipart/form-data" id="form">
+        <label for="venue-proof" id="venue-proof-label" class="btn"
+          >Choose a file instead</label
+        >
+        <input
+          type="file"
+          name="venue-proof"
+          id="venue-proof"
+          style="display: none"
+          onchange="
+            document.getElementById('venue-proof-label').innerText = 'Uploading...';
+            document.getElementById('venue-proof-label').classList.add('disabled');
+            document.getElementById('form').submit()
+        "
+          required
+        />
+      </form>
+    </div>
+
+    <script>
+      let counter = 0;
+
+      const dropHere = document.getElementById("orpheus");
+
+      document.body.addEventListener("dragover", (e) => e.preventDefault());
+      dropHere.addEventListener("dragenter", () => {
+        if (counter == 0) {
+          dropHere.classList.remove("closed");
+          dropHere.classList.add("open");
+        }
+        counter++;
+      });
+      dropHere.addEventListener("dragleave", () => {
+        counter--;
+        if (counter == 0) {
+          dropHere.classList.remove("open");
+          dropHere.classList.add("closed");
+        }
+      });
+      dropHere.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        counter = 0;
+        dropHere.classList.remove("open");
+        dropHere.classList.remove("closed");
+        dropHere.classList.add("chomp");
+
+        document.getElementById("venue-proof").files = e.dataTransfer.files;
+
+        document.getElementById("venue-proof-label").innerText =
+          "nom nom nom...";
+        document.getElementById("venue-proof-label").classList.add("disabled");
+        document.getElementById("form").submit();
+      });
+
+      document.body.addEventListener("drop", (e) => {
+        e.preventDefault();
+        alert("you need to put the file in grant dino's mouth!!!!");
+      });
+    </script>
+
+    <!-- <div class="card sunken">
       <p>Upload a photo or scan of one of the following:</p>
       <ul>
         <li>A contract with your venue</li>
@@ -96,6 +213,6 @@
           required
         />
       </form>
-    </div>
+    </div> -->
   </body>
 </html>
