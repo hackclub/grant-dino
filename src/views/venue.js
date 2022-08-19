@@ -62,6 +62,10 @@ export default function venueView({
             type: "mrkdwn",
             text: ":white_check_mark: <https://www.investopedia.com/terms/m/mou.asp|MOU>",
           },
+          {
+            type: "mrkdwn",
+            text: "Written confirmation in a screenshot or PDF of an email",
+          },
         ],
       },
       {
