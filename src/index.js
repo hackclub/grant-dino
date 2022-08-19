@@ -17,7 +17,7 @@ import { sign, verify } from "./jwt.js";
 import {
   extractUrl,
   escapeRegex,
-  isBankUrl,
+  extractBankSlug,
   safetyNet,
   coolSite,
 } from "./util.js";
@@ -258,9 +258,10 @@ app.view("apply", async ({ ack, view }) => {
   const externalId = uuid();
   state.external_id = externalId;
 
-  const bank_url = view.state.values.bank_url.bank_url.value;
+  const bankUrl = view.state.values.bank_url.bank_url.value;
+  const bankSlug = extractBankSlug(bankUrl);
 
-  if (!isBankUrl(bank_url)) {
+  if (!bankSlug) {
     await ack({
       response_action: "errors",
       errors: {
@@ -271,17 +272,31 @@ app.view("apply", async ({ ack, view }) => {
     return;
   }
 
-  state.bank_url = bank_url;
+  state.bank_url = bankUrl;
   state.url = view.state.values.url.url.value;
   state.start_date = view.state.values.start_date.start_date.selected_date;
 
-  await ack({
-    response_action: "push",
-    view: venueView({
-      state: await sign(state),
-      externalId,
-    }),
-  });
+  try {
+    await axios(`https://bank.hackclub.com/api/v3/organizations/${bankSlug}`);
+    await ack({
+      response_action: "push",
+      view: venueView({
+        state: await sign(state),
+        externalId,
+        bankSlug,
+      }),
+    });
+  } catch (e) {
+    await ack({
+      response_action: "push",
+      view: venueView({
+        state: await sign(state),
+        externalId,
+        bankNotTransparent: true,
+        bankSlug,
+      }),
+    });
+  }
 });
 
 app.view("apply2", async ({ ack, view, client }) => {

@@ -4,6 +4,8 @@ export default function venueView({
   venueProofUploaded = false,
   venueProofFilename,
   venueProofUrl,
+  bankNotTransparent = false,
+  bankSlug,
 }) {
   return {
     type: "modal",
@@ -20,6 +22,20 @@ export default function venueView({
     external_id: externalId,
     private_metadata: state,
     blocks: [
+      ...(bankNotTransparent
+        ? [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `> :warning: Looks like your Hack Club Bank account might not have Transparency Mode enabled. You can finish your application, but you'll need to turn on Transparency Mode in your <https://bank.hackclub.com/${bankSlug}/settings#transparency_mode_heading|Bank settings> to receive the grant.`,
+              },
+            },
+            {
+              type: "divider",
+            },
+          ]
+        : []),
       ...(venueProofUploaded
         ? [
             {
