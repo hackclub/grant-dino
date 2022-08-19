@@ -64,7 +64,7 @@ export default function venueView({
           },
           {
             type: "mrkdwn",
-            text: "Written confirmation in a screenshot or PDF of an email",
+            text: ":white_check_mark: Written confirmation from your venue in a screenshot or PDF of an email",
           },
         ],
       },
