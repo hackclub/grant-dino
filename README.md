@@ -1,5 +1,5 @@
-# Grantbot
+# grant dino
 
-_(name pending)_
+<img src="https://cloud-oopektrtn-hack-club-bot.vercel.app/0image.png" width="200">
 
-Our system for handling grant applications for [irl hs hackathons](https://hackclub.com/hackathons).
+The Slack bot that helps process [hackathon grants](https://hackclub.com/hackathons/grant).
