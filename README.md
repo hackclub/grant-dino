@@ -9,4 +9,4 @@ Grant dino is the Slack bot that helps manage [hackathon grant](https://hackclub
 
 Join the [#bot-spam-for-grants](https://hackclub.slack.com/archives/C03TS9KSBGC) channel on the Hack Club Slack.
 
-<img src="https://cloud-ef8b1h3lq-hack-club-bot.vercel.app/0screen_shot_2022-08-19_at_6.56.29_pm.png" alt="Modal containing a form, on Slack">
+<img src="https://cloud-ef8b1h3lq-hack-club-bot.vercel.app/0screen_shot_2022-08-19_at_6.56.29_pm.png" alt="Modal containing a form, on Slack" width="500">
