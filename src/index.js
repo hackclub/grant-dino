@@ -394,7 +394,27 @@ app.shortcut("update_grant_status", async ({ ack, shortcut, client }) => {
       filterByFormula: `{Message Timestamp} = "${shortcut.message_ts}"`,
     })
     .firstPage(async (err, records) => {
-      if (records.length == 0) return;
+      if (records.length == 0) {
+        await client.views.open({
+          trigger_id: shortcut.trigger_id,
+          view: {
+            type: "modal",
+            title: {
+              type: "plain_text",
+              text: "hmmmmmmm",
+            },
+            blocks: [
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: "hmm, looks like this application hasn't been submitted yet",
+                },
+              },
+            ],
+          },
+        });
+      }
       const record = records[0];
 
       await client.views.open({
