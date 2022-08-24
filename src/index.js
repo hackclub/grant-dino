@@ -229,27 +229,37 @@ app.action("yes-apply", async ({ client, body, action, ack }) => {
 app.action("apply", async ({ client, body, ack, action }) => {
   await ack();
 
-  const state = await verify(action.value);
+  try {
+    const state = await verify(action.value);
 
-  if (body.user.id != state.user) {
+    if (body.user.id != state.user) {
+      await client.chat.postEphemeral({
+        channel: body.channel.id,
+        user: body.user.id,
+        thread_ts: body.container.thread_ts,
+        text: "you didn't start this application!",
+      });
+      return;
+    }
+
+    state.ts = body.message.ts;
+
+    await client.views.open({
+      trigger_id: body.trigger_id,
+      view: applyView({
+        url: state.url,
+        state: await sign(state),
+      }),
+    });
+  } catch (e) {
     await client.chat.postEphemeral({
       channel: body.channel.id,
       user: body.user.id,
       thread_ts: body.container.thread_ts,
-      text: "you didn't start this application!",
+      text: "it looks like your grant application has expired— post your website in the channel again to apply!",
     });
     return;
   }
-
-  state.ts = body.message.ts;
-
-  await client.views.open({
-    trigger_id: body.trigger_id,
-    view: applyView({
-      url: state.url,
-      state: await sign(state),
-    }),
-  });
 });
 
 app.view("apply", async ({ ack, view }) => {
