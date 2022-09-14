@@ -386,6 +386,48 @@ app.view("apply2", async ({ ack, view, client }) => {
       ],
     },
   });
+
+  await client.chat.postMessage({
+    channel: "C026RKHLPNJ", // #bank-team
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "hey look, a new grant application:",
+        },
+        fields: [
+          {
+            type: "mrkdwn",
+            text: `*Person*\n<@${state.user}>`,
+          },
+          {
+            type: "mrkdwn",
+            text: `*Website*\n${state.url}`,
+          },
+          {
+            type: "mrkdwn",
+            text: `*Bank Organization*\n${state.bank_url}`,
+          },
+        ],
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            action_id: "idk",
+            url: "https://airtable.com/appEzv7w2IBMoxxHe/tblnNB5iMbidfB552/viwjF8iDPU3gAiXJU",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":airtable: View on Airtable",
+            },
+          },
+        ],
+      },
+    ],
+  });
 });
 
 // idk
