@@ -287,7 +287,21 @@ app.view("apply", async ({ ack, view }) => {
   state.start_date = view.state.values.start_date.start_date.selected_date;
 
   try {
-    await axios(`https://bank.hackclub.com/api/v3/organizations/${bankSlug}`);
+    const { data } = await axios(
+      `https://bank.hackclub.com/api/v3/organizations/${bankSlug}`
+    );
+
+    if (data.demo_mode) {
+      await ack({
+        response_action: "errors",
+        errors: {
+          bank_url:
+            "This account is in demo mode— please activate your account before applying for the grant.",
+        },
+      });
+      return;
+    }
+
     await ack({
       response_action: "push",
       view: venueView({
