@@ -26,6 +26,7 @@ export default function applyView({ url, state }) {
           "Fully in-person",
           "Venue acquired",
           "Handmade website",
+          "Free for attendees",
         ].map((requirement) => ({
           type: "mrkdwn",
           text: `:white_check_mark: ${requirement}`,
