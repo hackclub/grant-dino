@@ -28,6 +28,7 @@ const ADMINS = [
   "U0C7B14Q3", // Max
   "U01QHUY5XLK", // Mel
   "U02A67DA1QX", // Liv
+  "U04JRBGPH5G", // Ruien
 ];
 
 const base = airtable.base("appEzv7w2IBMoxxHe");
