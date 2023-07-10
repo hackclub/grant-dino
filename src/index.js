@@ -497,7 +497,7 @@ app.shortcut("update_grant_status", async ({ ack, shortcut, client }) => {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: record.fields["Event URL"],
+                text: record.fields["Event URL"] || "<unknown url>",
               },
             },
             {
