@@ -341,8 +341,10 @@ app.view("apply2", async ({ ack, view, client }) => {
 app.view("apply3", async ({ ack, view, client }) => {
   const state = await verify(view.private_metadata);
 
-  state.sticker_amount = view.state.values.amount.amount.selected_option.value;
-  state.sticker_address = view.state.values.address.address.value;
+  state.sticker_amount =
+    view.state.values.amount?.amount?.selected_option?.value ?? undefined;
+  state.sticker_address =
+    view.state.values.address?.address?.value ?? undefined;
 
   await base("FIRST Grant").create([
     {
@@ -368,6 +370,27 @@ app.view("apply3", async ({ ack, view, client }) => {
       },
     },
   ]);
+
+  await ack({
+    response_action: "push",
+    view: {
+      type: "modal",
+      clear_on_close: true,
+      title: {
+        type: "plain_text",
+        text: "Thanks for applying!",
+      },
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: ":tada: Your application has been submitted! We'll review it and follow up within 24 hours.",
+          },
+        },
+      ],
+    },
+  });
 
   const text =
     "Your application has been submitted! We'll review it and post in this thread within 24 hours.";
@@ -396,27 +419,6 @@ app.view("apply3", async ({ ack, view, client }) => {
     name: t.react.greet,
     channel: process.env.GRANTS_CHANNEL,
     timestamp: state.original_ts,
-  });
-
-  await ack({
-    response_action: "push",
-    view: {
-      type: "modal",
-      clear_on_close: true,
-      title: {
-        type: "plain_text",
-        text: "Thanks for applying!",
-      },
-      blocks: [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: ":tada: Your application has been submitted! We'll review it and follow up within 24 hours.",
-          },
-        },
-      ],
-    },
   });
 
   await client.chat.postMessage({
