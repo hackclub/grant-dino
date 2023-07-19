@@ -11,8 +11,11 @@ import airtable from "airtable";
 import axios from "axios";
 
 import venueView from "./views/venue.js";
-import t from "./transcript.js";
+import stickersView from "./views/stickers.js";
 import applyView from "./views/apply.js";
+
+import t from "./transcript.js";
+
 import { sign, verify } from "./jwt.js";
 import {
   extractUrl,
@@ -329,6 +332,18 @@ app.view("apply2", async ({ ack, view, client }) => {
 
   state.venue_email = view.state.values.venue_email.venue_email.value;
 
+  await ack({
+    response_action: "push",
+    view: stickersView({ state: await sign(state) }),
+  });
+});
+
+app.view("apply3", async ({ ack, view, client }) => {
+  const state = await verify(view.private_metadata);
+
+  state.sticker_amount = view.state.values.amount.amount.selected_option.value;
+  state.sticker_address = view.state.values.address.address.value;
+
   await base("FIRST Grant").create([
     {
       fields: {
@@ -348,6 +363,8 @@ app.view("apply2", async ({ ack, view, client }) => {
         "Venue Contact Info": state.venue_email,
         "Start Date": state.start_date,
         Status: "Pending",
+        "How many stickers?": state.sticker_amount,
+        "Organizer Address": state.sticker_address,
       },
     },
   ]);

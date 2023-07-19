@@ -10,13 +10,12 @@ export default function venueView({
   return {
     type: "modal",
     callback_id: "apply2",
-    title: { type: "plain_text", text: "Your venue - 2/2" },
+    title: { type: "plain_text", text: "Your venue - 2/3" },
     close: { type: "plain_text", text: "Back" },
     submit: venueProofUploaded
       ? {
           type: "plain_text",
-          text: ":flap: Apply :flap:",
-          emoji: true,
+          text: "Next",
         }
       : undefined,
     external_id: externalId,
@@ -33,30 +32,6 @@ export default function venueView({
             },
             {
               type: "divider",
-            },
-          ]
-        : []),
-      ...(venueProofUploaded
-        ? [
-            {
-              type: "input",
-              block_id: "venue_email",
-              element: {
-                type: "plain_text_input",
-                action_id: "venue_email",
-                placeholder: {
-                  type: "plain_text",
-                  text: "e.g. orpheus@my-venue.com",
-                },
-              },
-              hint: {
-                type: "plain_text",
-                text: "This is the email or phone number of someone we can contact at your venue. We'll never reach out to your venue without contacting you first.",
-              },
-              label: {
-                type: "plain_text",
-                text: "Venue point of contact",
-              },
             },
           ]
         : []),
@@ -121,6 +96,30 @@ export default function venueView({
               type: "image",
               image_url: venueProofUrl,
               alt_text: "Proof of venue",
+            },
+          ]
+        : []),
+      ...(venueProofUploaded
+        ? [
+            {
+              type: "input",
+              block_id: "venue_email",
+              element: {
+                type: "email_text_input",
+                action_id: "venue_email",
+                placeholder: {
+                  type: "plain_text",
+                  text: "e.g. orpheus@my-venue.com",
+                },
+              },
+              hint: {
+                type: "plain_text",
+                text: "This is the email or phone number of someone we can contact at your venue. We'll never reach out to your venue without contacting you first.",
+              },
+              label: {
+                type: "plain_text",
+                text: "Venue point of contact",
+              },
             },
           ]
         : []),
