@@ -76,7 +76,7 @@ export default function applyView({ url, state }) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "You'll need to be on <https://hackclub.com/hcb|Hack Club Bank> to receive your grant. If you're not, click that button to sign up! :arrow_right:",
+          text: "You'll need to be on <https://hackclub.com/hcb|HCB> to receive your grant. If you're not, click that button to sign up! :arrow_right:",
         },
         accessory: {
           type: "button",
