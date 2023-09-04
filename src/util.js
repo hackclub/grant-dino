@@ -14,7 +14,7 @@ export const safetyNet = (handler) => async (req, res) => {
 
 export function extractBankSlug(url) {
   try {
-    return url.match(/bank\.hackclub\.com\/([a-zA-Z0-9\-_]+)/i)[1];
+    return url.match(/hcb\.hackclub\.com\/([a-zA-Z0-9\-_]+)/i)[1];
   } catch (e) {
     return null;
   }
