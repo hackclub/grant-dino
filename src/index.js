@@ -292,7 +292,7 @@ app.view("apply", async ({ ack, view }) => {
 
   try {
     const { data } = await axios(
-      `https://bank.hackclub.com/api/v3/organizations/${bankSlug}`
+      `https://hcb.hackclub.com/api/v3/organizations/${bankSlug}`
     );
 
     if (data.demo_mode) {

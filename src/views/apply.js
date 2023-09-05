@@ -76,7 +76,7 @@ export default function applyView({ url, state }) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "You'll need to be on <https://hackclub.com/bank|Hack Club Bank> to receive your grant. If you're not, click that button to sign up! :arrow_right:",
+          text: "You'll need to be on <https://hackclub.com/hcb|HCB> to receive your grant. If you're not, click that button to sign up! :arrow_right:",
         },
         accessory: {
           type: "button",
@@ -85,7 +85,7 @@ export default function applyView({ url, state }) {
             text: ":bank-hackclub: Sign up for Hack Club Bank",
           },
           action_id: "idk",
-          url: "https://hackclub.com/bank#apply",
+          url: "https://hackclub.com/hcb#apply",
         },
       },
       {
@@ -105,7 +105,7 @@ export default function applyView({ url, state }) {
           action_id: "bank_url",
           placeholder: {
             type: "plain_text",
-            text: "e.g. bank.hackclub.com/mahacks",
+            text: "e.g. hcb.hackclub.com/mahacks",
           },
         },
         label: {

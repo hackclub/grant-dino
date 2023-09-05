@@ -27,7 +27,7 @@ export default function venueView({
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `> :warning: Looks like your Hack Club Bank account might not have Transparency Mode enabled. You can finish your application, but you'll need to turn on Transparency Mode in your <https://bank.hackclub.com/${bankSlug}/settings#transparency_mode_heading|Bank settings> to receive the grant.`,
+                text: `> :warning: Looks like your HCB account might not have Transparency Mode enabled. You can finish your application, but you'll need to turn on Transparency Mode in your <https://hcb.hackclub.com/${bankSlug}/settings#transparency_mode_heading|Bank settings> to receive the grant.`,
               },
             },
             {
