@@ -5,7 +5,7 @@ export default function applyView({ url, state }) {
     private_metadata: state,
     title: {
       type: "plain_text",
-      text: "Your hackathon - 1/3",
+      text: "Your hackathon - 1/2",
     },
     submit: {
       type: "plain_text",

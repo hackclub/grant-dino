@@ -10,12 +10,13 @@ export default function venueView({
   return {
     type: "modal",
     callback_id: "apply2",
-    title: { type: "plain_text", text: "Your venue - 2/3" },
+    title: { type: "plain_text", text: "Your venue - 2/2" },
     close: { type: "plain_text", text: "Back" },
     submit: venueProofUploaded
       ? {
           type: "plain_text",
-          text: "Next",
+          text: ":flap: Apply :flap:",
+          emoji: true,
         }
       : undefined,
     external_id: externalId,
