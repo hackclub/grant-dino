@@ -279,8 +279,7 @@ app.view("apply", async ({ ack, view }) => {
     await ack({
       response_action: "errors",
       errors: {
-        bank_url:
-          "Hmm, this doesn't look like a Hack Club Bank organization URL.",
+        bank_url: "Hmm, this doesn't look like an HCB organization URL.",
       },
     });
     return;
@@ -346,7 +345,7 @@ app.view("apply3", async ({ ack, view, client }) => {
   state.sticker_address =
     view.state.values.address?.address?.value ?? undefined;
 
-  await base("FIRST Grant").create([
+  await base("tblnNB5iMbidfB552").create([
     {
       fields: {
         "Event URL": state.url,
@@ -474,7 +473,7 @@ app.shortcut("update_grant_status", async ({ ack, shortcut, client }) => {
 
   if (!ADMINS.includes(shortcut.user.id)) return;
 
-  await base("FIRST Grant")
+  await base("tblnNB5iMbidfB552")
     .select({
       maxRecords: 1,
       filterByFormula: `{Message Timestamp} = "${shortcut.message_ts}"`,

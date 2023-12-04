@@ -82,7 +82,7 @@ export default function applyView({ url, state }) {
           type: "button",
           text: {
             type: "plain_text",
-            text: ":bank-hackclub: Sign up for Hack Club Bank",
+            text: ":bank-hackclub: Sign up for HCB",
           },
           action_id: "idk",
           url: "https://hackclub.com/hcb#apply",
@@ -93,7 +93,7 @@ export default function applyView({ url, state }) {
         elements: [
           {
             type: "mrkdwn",
-            text: "We process Hack Club Bank signups within 24 hours on weekdays.",
+            text: "We process HCB signups within 24 hours on weekdays.",
           },
         ],
       },
@@ -110,7 +110,7 @@ export default function applyView({ url, state }) {
         },
         label: {
           type: "plain_text",
-          text: "Hack Club Bank organization URL",
+          text: "HCB organization URL",
         },
       },
     ],
